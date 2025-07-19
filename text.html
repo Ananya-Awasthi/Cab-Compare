@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RideCompare - Compare Cab, Auto & Bike Prices</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .location-inputs {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .swap-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .swap-btn:hover {
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-container {
+            display: none;
+        }
+
+        .results-header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .route-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .route-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .route-details {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .vehicle-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: white;
+            border: 2px solid #e1e5e9;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab-btn:hover:not(.active) {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .rides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .ride-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .ride-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .ride-card.best-price {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #f8fff9, #e6ffed);
+        }
+
+        .best-price-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .ride-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .provider-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .provider-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .uber { background: #000; }
+        .ola { background: #00b85c; }
+        .rapido { background: #ff6b35; }
+        .auto { background: #ffc107; color: #000; }
+
+        .provider-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .ride-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .price-section {
+            text-align: center;
+        }
+
+        .price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .price-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .detail-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .book-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .book-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 4px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .location-inputs {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .swap-btn {
+                justify-self: center;
+            }
+            
+            .route-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .rides-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 RideCompare</h1>
+            <p>Compare prices across Uber, Ola, Rapido & Local Autos</p>
+        </div>
+
+        <div class="search-card">
+            <div class="location-inputs">
+                <div class="input-group">
+                    <label for="pickup">Pickup Location</label>
+                    <input type="text" id="pickup" placeholder="Enter pickup location">
+                </div>
+                
+                <button class="swap-btn" onclick="swapLocations()">⇄</button>
+                
+                <div class="input-group">
+                    <label for="drop">Drop Location</label>
+                    <input type="text" id="drop" placeholder="Enter drop location">
+                </div>
+            </div>
+            
+            <button class="search-btn" onclick="searchRides()">
+                Find Best Rides
+            </button>
+        </div>
+
+        <div class="loading" id="loadingDiv" style="display: none;">
+            <div class="spinner"></div>
+            <p>Fetching best prices from all providers...</p>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="results-header">
+                <div class="route-info">
+                    <div class="route-text" id="routeText"></div>
+                    <div class="route-details">
+                        <span id="distance">12.5 km</span>
+                        <span id="duration">25-30 mins</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vehicle-tabs">
+                <button class="tab-btn active" onclick="switchTab('cab')" data-tab="cab">
+                    🚗 Cab
+                </button>
+                <button class="tab-btn" onclick="switchTab('auto')" data-tab="auto">
+                    🛺 Auto
+                </button>
+                <button class="tab-btn" onclick="switchTab('bike')" data-tab="bike">
+                    🏍️ Bike
+                </button>
+            </div>
+
+            <div class="rides-grid" id="ridesGrid">
+                <!-- Rides will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'cab';
+        let ridesData = {};
+
+        function swapLocations() {
+            const pickup = document.getElementById('pickup');
+            const drop = document.getElementById('drop');
+            const temp = pickup.value;
+            pickup.value = drop.value;
+            drop.value = temp;
+        }
+
+        function searchRides() {
+            const pickup = document.getElementById('pickup').value.trim();
+            const drop = document.getElementById('drop').value.trim();
+            
+            if (!pickup || !drop) {
+                alert('Please enter both pickup and drop locations');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loadingDiv').style.display = 'block';
+            document.getElementById('resultsContainer').style.display = 'none';
+
+            // Simulate API call delay
+            setTimeout(() => {
+                generateMockData(pickup, drop);
+                displayResults(pickup, drop);
+            }, 2000);
+        }
+
+        function generateMockData(pickup, drop) {
+            const basePrice = Math.floor(Math.random() * 200) + 100;
+            
+            ridesData = {
+                cab: [
+                    {
+                        provider: 'Uber',
+                        type: 'UberGo',
+                        price: Math.floor(basePrice * 1.1),
+                        eta: '3-5 mins',
+                        rating: '4.5',
+                        logo: 'uber'
+                    },
+                    {
+                        provider: 'Ola',
+                        type: 'Mini',
+                        price: Math.floor(basePrice * 1.05),
+                        eta: '4-6 mins',
+                        rating: '4.3',
+                        logo: 'ola'
+                    },
+                    {
+                        provider: 'Uber',
+                        type: 'Premier',
+                        price: Math.floor(basePrice * 1.4),
+                        eta: '5-7 mins',
+                        rating: '4.7',
+                        logo: 'uber'
+                    },
+                    {
+                        provider: 'Ola',
+                        type: 'Prime',
+                        price: Math.floor(basePrice * 1.35),
+                        eta: '6-8 mins',
+                        rating: '4.6',
+                        logo: 'ola'
+                    }
+                ],
+                auto: [
+                    {
+                        provider: 'Ola',
+                        type: 'Auto',
+                        price: Math.floor(basePrice * 0.7),
+                        eta: '5-8 mins',
+                        rating: '4.1',
+                        logo: 'ola'
+                    },
+                    {
+                        provider: 'Uber',
+                        type: 'Auto',
+                        price: Math.floor(basePrice * 0.75),
+                        eta: '4-7 mins',
+                        rating: '4.2',
+                        logo: 'uber'
+                    },
+                    {
+                        provider: 'Rapido',
+                        type: 'Auto',
+                        price: Math.floor(basePrice * 0.65),
+                        eta: '6-10 mins',
+                        rating: '4.0',
+                        logo: 'rapido'
+                    }
+                ],
+                bike: [
+                    {
+                        provider: 'Rapido',
+                        type: 'Bike Taxi',
+                        price: Math.floor(basePrice * 0.4),
+                        eta: '3-5 mins',
+                        rating: '4.3',
+                        logo: 'rapido'
+                    },
+                    {
+                        provider: 'Ola',
+                        type: 'Bike',
+                        price: Math.floor(basePrice * 0.45),
+                        eta: '4-6 mins',
+                        rating: '4.2',
+                        logo: 'ola'
+                    },
+                    {
+                        provider: 'Uber',
+                        type: 'Moto',
+                        price: Math.floor(basePrice * 0.5),
+                        eta: '3-5 mins',
+                        rating: '4.4',
+                        logo: 'uber'
+                    }
+                ]
+            };
+
+            // Sort each category by price
+            Object.keys(ridesData).forEach(key => {
+                ridesData[key].sort((a, b) => a.price - b.price);
+            });
+        }
+
+        function displayResults(pickup, drop) {
+            document.getElementById('loadingDiv').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'block';
+            document.getElementById('routeText').textContent = `${pickup} → ${drop}`;
+            
+            renderRides();
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.tab === tab) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            renderRides();
+        }
+
+        function renderRides() {
+            const grid = document.getElementById('ridesGrid');
+            const rides = ridesData[currentTab] || [];
+            
+            grid.innerHTML = rides.map((ride, index) => `
+                <div class="ride-card ${index === 0 ? 'best-price' : ''}">
+                    ${index === 0 ? '<div class="best-price-badge">Best Price</div>' : ''}
+                    <div class="ride-header">
+                        <div class="provider-info">
+                            <div class="provider-logo ${ride.logo}">${ride.provider.charAt(0)}</div>
+                            <div>
+                                <div class="provider-name">${ride.provider}</div>
+                                <div class="ride-type">${ride.type}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="price-section">
+                        <div class="price">₹${ride.price}</div>
+                        <div class="price-details">
+                            <div class="detail-item">
+                                <div class="detail-label">ETA</div>
+                                <div class="detail-value">${ride.eta}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Rating</div>
+                                <div class="detail-value">⭐ ${ride.rating}</div>
+                            </div>
+                        </div>
+                        <button class="book-btn" onclick="bookRide('${ride.provider}', '${ride.type}', ${ride.price})">
+                            Book Now
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function bookRide(provider, type, price) {
+            alert(`Redirecting to ${provider} app to book ${type} for ₹${price}`);
+            // In a real app, this would redirect to the respective app or website
+        }
+
+        // Add some sample locations for demonstration
+        const locations = ['Connaught Place, Delhi', 'Andheri, Mumbai', 'Koramangala, Bangalore', 'Anna Nagar, Chennai', 'Salt Lake, Kolkata'];
+        
+        // Add autocomplete functionality (basic implementation)
+        function setupAutocomplete() {
+            const pickupInput = document.getElementById('pickup');
+            const dropInput = document.getElementById('drop');
+            
+            [pickupInput, dropInput].forEach(input => {
+                input.addEventListener('input', function() {
+                    // Basic autocomplete logic would go here
+                    // In a real app, this would integrate with Google Maps API or similar
+                });
+            });
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            setupAutocomplete();
+            
+            // Add enter key support
+            document.getElementById('pickup').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') searchRides();
+            });
+            
+            document.getElementById('drop').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') searchRides();
+            });
+        });
+    </script>
+</body>
+</html>
