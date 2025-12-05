@@ -1,14 +1,34 @@
 # Cab-Compare
-RideCompare is a lightweight, responsive front-end that lets users compare estimated fares and ETAs across cab, auto, and bike providers (Uber, Ola, Rapido — mock data). It’s perfect as a demo / portfolio project or as the UI skeleton to plug in real ride-hailing APIs later.
-<br>
-Highlights
+🚗 RideCompare
+Compare Cab, Auto & Bike Prices Instantly
 
-Clean, modern UI with friendly micro-interactions
+RideCompare is a sleek, responsive web app that lets users compare ride prices and ETAs across multiple providers like Uber, Ola, and Rapido (using mock data).
+It is built entirely with HTML, CSS, and vanilla JavaScript, making it lightweight and easy to extend.
 
-Tabbed vehicle categories (Cab / Auto / Bike)
+✨ Features
 
-Mock-data price comparison with “Best Price” badge
+🔍 Search & Compare – Enter pickup and drop to view estimated fares
 
-Swap pickup/drop, basic autocomplete hooks, and booking stub
+🔄 Swap Locations – One-click swap button for convenience
 
-Mobile-responsive design
+🏆 Best Price Highlight – Automatically marks the cheapest ride
+
+🚗 Switch Vehicle Type – Cab | Auto | Bike tabs with dynamic refresh
+
+⚡ Mock API Simulation – 2-second loading + realistic fare calculation
+
+📱 Fully Responsive UI – Optimized for mobile and desktop
+
+🎨 Modern Gradient UI – Glassmorphism + shadow effects
+
+🖼️ Demo Preview
+
+Single-page UI built with beautiful gradients, smooth cards, and interactive ride tiles.
+
+(Add screenshot here if you want)
+
+🛠️ Tech Stack
+Technology	Purpose
+HTML5	Structure and layout
+CSS3	Modern UI design, responsiveness
+JavaScript	Dynamic logic, mock API, card rendering
