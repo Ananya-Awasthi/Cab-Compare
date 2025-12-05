@@ -1,33 +1,59 @@
 # Cab-Compare
-🚗 RideCompare
-Compare Cab, Auto & Bike Prices Instantly
+<b> RideCompare – Smart Cab, Auto & Bike Fare Comparison</b>
 
-RideCompare is a sleek, responsive web app that lets users compare ride prices and ETAs across multiple providers like Uber, Ola, and Rapido (using mock data).
-It is built entirely with HTML, CSS, and vanilla JavaScript, making it lightweight and easy to extend.
+Finding the best ride shouldn’t be guesswork. RideCompare helps users instantly compare estimated prices, ETAs, and ride types across popular providers like Uber, Ola, and Rapido — all through a clean, modern UI.
 
-✨ Features
+Whether you're planning a quick auto ride or booking a long-distance cab, RideCompare gives you clarity, convenience, and confidence before booking.
 
-🔍 Search & Compare – Enter pickup and drop to view estimated fares
+<b>Overview</b>
 
-🔄 Swap Locations – One-click swap button for convenience
+RideCompare is a lightweight, front-end comparison tool built with HTML, CSS, and vanilla JavaScript.
+It simulates real-world fare and ETA calculations using mock data and presents the results in a polished, user-friendly interface.
 
-🏆 Best Price Highlight – Automatically marks the cheapest ride
+The project is designed as:
 
-🚗 Switch Vehicle Type – Cab | Auto | Bike tabs with dynamic refresh
+A portfolio-friendly web app,
 
-⚡ Mock API Simulation – 2-second loading + realistic fare calculation
+A starter UI for integrating real APIs, and
 
-📱 Fully Responsive UI – Optimized for mobile and desktop
+A concept prototype for travel or mobility applications.
 
-🎨 Modern Gradient UI – Glassmorphism + shadow effects
+<b>Features</b>
+Smart Ride Comparison
 
-🖼️ Demo Preview
+Automatically compares rides across:
 
-Single-page UI built with beautiful gradients, smooth cards, and interactive ride tiles.
+Cabs
 
-(Add screenshot here if you want)
+Autos
 
-🛠️ Tech Stack
+Bike Taxis
+
+Each category shows:
+
+Price
+
+ETA
+
+Ride type
+
+Rating
+
+Provider (Uber, Ola, Rapido)
+
+<b>Best Price Detection</b>
+
+The lowest fare is highlighted with a Best Price badge.
+
+<b>Seamless UI Interactions</b>
+
+Swap pickup & drop locations
+
+Auto-sorted ride lists
+
+Animated loading screen
+
+Fully responsive cards & tabs
 Technology	Purpose
 HTML5	Structure and layout
 CSS3	Modern UI design, responsiveness
